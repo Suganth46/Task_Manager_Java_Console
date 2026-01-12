@@ -29,10 +29,15 @@ public class Task {
     public String getTaskDescription(){
         return taskDescription;
     }
-
+    
+    //Setter
+    public void setTaskComplete(boolean b) {
+        this.completed=true;
+    }
     @Override
     public String toString(){
         String status=completed?"[COMPLETED]":"[PENDING]";
         return String.format("%d. %s %s (Due: %s)\n Desc: %s\n notes count: %d",taskID,status,taskTitle,deadline,taskDescription,note.size());
     }
+
 }

@@ -24,10 +24,10 @@ public class TaskManagerApp {
                     getTaskById();
                     break;
                 case 4:
-                    
+                    setTaskComplete();
                     break;
                 case 5:
-                    
+                    deleteTask();
                     break;
                 case 6:
                     
@@ -43,6 +43,35 @@ public class TaskManagerApp {
                     break;
             }
         }
+    }
+    private static void printMenu() {
+        System.out.println("\n--- MENU ---");
+        System.out.println("1. Create New Task");
+        System.out.println("2. View All Tasks");
+        System.out.println("3. View Task Details (with Notes)");
+        System.out.println("4. Mark Task as Completed");
+        System.out.println("5. Delete Task");
+        System.out.println("6. Add Note to Task");
+        System.out.println("7. Delete Note from Task");
+        System.out.println("0. Exit");
+    }
+    private static void deleteTask() {
+        int id=getIntInput("Enter Task Id to Delete: ");
+        if(service.deleteTask(id)){
+            System.out.println("Task Delete");
+        }
+        else{
+            System.out.println("Task Not Found");
+        }
+    }
+    private static void setTaskComplete() {
+            int id=getIntInput("Enter Task ID to mark complete: ");
+            if(service.markTaskCompleted(id)){
+                System.out.println("Task Mark As Completed");
+            }
+            else{
+                System.out.println("Task Not Found");
+            }
     }
     private static void getTaskById() {
         int id=getIntInput("Enter a Id: ");
@@ -89,16 +118,5 @@ public class TaskManagerApp {
                 System.out.println("-----------------");
             }
         }
-    }
-    private static void printMenu() {
-        System.out.println("\n--- MENU ---");
-        System.out.println("1. Create New Task");
-        System.out.println("2. View All Tasks");
-        System.out.println("3. View Task Details (with Notes)");
-        System.out.println("4. Mark Task as Completed");
-        System.out.println("5. Delete Task");
-        System.out.println("6. Add Note to Task");
-        System.out.println("7. Delete Note from Task");
-        System.out.println("0. Exit");
     }
 }

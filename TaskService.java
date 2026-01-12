@@ -19,5 +19,16 @@ public class TaskService {
         .findFirst()
         .orElse(null);
     }
+    public boolean markTaskCompleted(int id) {
+        Task task=getTaskById(id);
+        if(task!=null){
+            task.setTaskComplete(true);
+            return true;
+        }
+        return false;
+    }
+    public boolean deleteTask(int id) {
+        return taskList.removeIf(t-> t.getTaskId()==id);
+    }
     
 }
