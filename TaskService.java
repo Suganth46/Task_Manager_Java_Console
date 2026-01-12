@@ -30,5 +30,25 @@ public class TaskService {
     public boolean deleteTask(int id) {
         return taskList.removeIf(t-> t.getTaskId()==id);
     }
+    public void addNoteToTask(int id, String title, String body) {
+        Task task=getTaskById(id);
+        if(task!=null){
+            int noteId=task.getNoteCount();
+            Note note=new Note(noteId,title,body);
+            task.addNote(note);
+            task.setNoteCount(noteId++);
+            System.out.println("Note Added Successfully");
+        }
+        else{
+            System.out.println("Task Not Found");
+        }
+    }
+    public boolean deleteNoteFromTask(int taskId, int noteId) {
+        Task task=getTaskById(taskId);
+        if(task!=null){
+            return task.removeNote(noteId);
+        }
+        return false;
+    }
     
 }

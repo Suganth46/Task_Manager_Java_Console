@@ -11,8 +11,7 @@ public class TaskManagerApp {
         System.out.println("Task Manager");
         while (true) {
             printMenu();
-            System.out.print("Enter Choice: ");
-            int choice=scanner.nextInt();
+            int choice=getIntInput("Enter choice: ");
             switch (choice) {
                 case 1:
                     createTask();
@@ -30,10 +29,10 @@ public class TaskManagerApp {
                     deleteTask();
                     break;
                 case 6:
-                    
+                    addNoteToTask();
                     break;
                 case 7:
-                    
+                    deleteNoteFromTask();
                     break;
                 case 0:
                     System.out.println("Exiting.......");
@@ -54,6 +53,28 @@ public class TaskManagerApp {
         System.out.println("6. Add Note to Task");
         System.out.println("7. Delete Note from Task");
         System.out.println("0. Exit");
+    }
+    private static void deleteNoteFromTask() {
+        int taskId=getIntInput("Enter a TaskId: ");
+        int noteId=getIntInput("Enter a NoteId: ");
+        if(service.deleteNoteFromTask(taskId,noteId)){
+            System.out.println("Note Deleted");
+        }
+        else{
+            System.out.println("Task or Note not found");
+        }
+    }
+    private static void addNoteToTask() {
+        int id=getIntInput("Enter Task Id to Add Note: ");
+        if(service.getTaskById(id)==null){
+            System.out.println("Task Not Found");
+            return;
+        }
+        System.out.print("Enter a Title: ");
+        String title=scanner.nextLine();
+        System.out.print("Enter a body: ");
+        String body=scanner.nextLine();
+        service.addNoteToTask(id,title,body);
     }
     private static void deleteTask() {
         int id=getIntInput("Enter Task Id to Delete: ");
@@ -76,9 +97,23 @@ public class TaskManagerApp {
     private static void getTaskById() {
         int id=getIntInput("Enter a Id: ");
         Task task=service.getTaskById(id);
+        if(task!=null){
+            System.out.println("\n=== TASK DETAILS ===");
+            System.out.println(task);
+            System.out.println("--- NOTES ---");
+            if(task.getNotes().isEmpty()){
+                System.out.println("No notes attached.");
+            }
+            else{
+                task.getNotes().forEach(System.out::println);
+            }
+        }
+        else{
+            System.out.println("Task Not Found");
+        }
     }
     private static int getIntInput(String string) {
-        System.out.println(string);
+        System.out.print(string);
         while (!scanner.hasNextInt()) {
             System.out.println("Invalid Input, Enter a Number");
             scanner.next();
@@ -90,7 +125,6 @@ public class TaskManagerApp {
     private static void createTask() {
         System.out.print("Enter Title: ");
         String title=scanner.nextLine();
-        scanner.nextLine();
         System.out.print("Enter Description: ");
         String description=scanner.nextLine();
         LocalDate date=null;
