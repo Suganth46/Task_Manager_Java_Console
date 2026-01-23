@@ -1,9 +1,9 @@
+import Model.Note;
 import Model.Task;
 import Service.TaskService;
 
 import java.sql.Date;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
@@ -11,7 +11,7 @@ import java.util.Scanner;
 public class TaskManagerApp {
     private static TaskService service=new TaskService();
     private static Scanner scanner=new Scanner(System.in);
-    private static DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter FORMATTER =DateTimeFormatter.ofPattern("dd/MM/yyyy");
     public static void main(String[] args) throws Exception {
         System.out.println("Task Manager");
         while (true) {
@@ -59,7 +59,7 @@ public class TaskManagerApp {
         System.out.println("7. Delete Note from Task");
         System.out.println("0. Exit");
     }
-    private static void deleteNoteFromTask() {
+    private static void deleteNoteFromTask() throws Exception {
         int taskId=getIntInput("Enter a TaskId: ");
         int noteId=getIntInput("Enter a NoteId: ");
         if(service.deleteNoteFromTask(taskId,noteId)){
@@ -69,7 +69,7 @@ public class TaskManagerApp {
             System.out.println("Task or Note not found");
         }
     }
-    private static void addNoteToTask() {
+    private static void addNoteToTask() throws Exception {
         int id=getIntInput("Enter Task Id to Add Note: ");
         if(service.getTaskById(id)==null){
             System.out.println("Task Not Found");
@@ -81,7 +81,7 @@ public class TaskManagerApp {
         String body=scanner.nextLine();
         service.addNoteToTask(id,title,body);
     }
-    private static void deleteTask() {
+    private static void deleteTask() throws Exception {
         int id=getIntInput("Enter Task Id to Delete: ");
         if(service.deleteTask(id)){
             System.out.println("Task Delete");
@@ -90,7 +90,7 @@ public class TaskManagerApp {
             System.out.println("Task Not Found");
         }
     }
-    private static void setTaskComplete() {
+    private static void setTaskComplete() throws Exception {
             int id=getIntInput("Enter Task ID to mark complete: ");
             if(service.markTaskCompleted(id)){
                 System.out.println("Task Mark As Completed");
@@ -99,18 +99,25 @@ public class TaskManagerApp {
                 System.out.println("Task Not Found");
             }
     }
-    private static void getTaskById() {
+    private static void getTaskById() throws Exception {
         int id=getIntInput("Enter a Id: ");
         Task task=service.getTaskById(id);
         if(task!=null){
             System.out.println("\n=== TASK DETAILS ===");
-            System.out.println(task);
+            String status=task.getTaskComplete()?"[COMPLETED]":"[PENDING]";
+            String title=(task.getTaskTitle()!=null && !task.getTaskTitle().isEmpty())?task.getTaskTitle():"No title";
+            try {
+                System.out.printf("%d. %s %s (Due: %s)\n Desc: %s\n",task.getTaskId(),status,title,task.getDeadline(),task.getTaskDescription());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
             System.out.println("--- NOTES ---");
-            if(task.getNotes().isEmpty()){
+            List<Note> notes=service.getAllNotes(id);
+            if(notes.isEmpty()){
                 System.out.println("No notes attached.");
             }
             else{
-                task.getNotes().forEach(System.out::println);
+                notes.forEach(System.out::println);
             }
         }
         else{
@@ -133,19 +140,19 @@ public class TaskManagerApp {
         System.out.print("Enter Description: ");
         String description=scanner.nextLine();
         Date date=null;
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         while(date==null){
             System.out.print("Enter a DeadLine (dd/MM/yyyy): ");
-            String dateString=scanner.nextLine();
+            String dateString=scanner.nextLine().trim();
             try {
-                date=(Date) formatter.parse(dateString);
+                LocalDate temp=LocalDate.parse(dateString, FORMATTER);
+                date=Date.valueOf(temp);
             } catch (Exception e) {
                 System.out.println("Invalid Date Format use dd/MM/yyyy");
             }
         }
         service.createTask(title,description,date);
     }
-    private static void getAllTasks(){
+    private static void getAllTasks() throws Exception{
         List<Task> task=service.getAllTasks();
         if(task.isEmpty()){
             System.out.println("No Task Available");
@@ -154,7 +161,13 @@ public class TaskManagerApp {
             System.out.println("\n--- TASK LIST ---");
 
             for(Task t: task){
-                System.out.println(t.toString());
+                String status=t.getTaskComplete()?"[COMPLETED]":"[PENDING]";
+                String title=(t.getTaskTitle()!=null && !t.getTaskTitle().isEmpty())?t.getTaskTitle():"No title";
+                try {
+                    System.out.printf("%d. %s %s (Due: %s)\n Desc: %s\n notes count: %d\n",t.getTaskId(),status,title,t.getDeadline(),t.getTaskDescription(),service.getNotesCount(t.getTaskId()));
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 System.out.println("-----------------");
             }
         }
