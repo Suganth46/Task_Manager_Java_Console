@@ -1,7 +1,10 @@
 # Compiled class file
 *.class
-
-.idea
+*.log
+.idea/
+*.iml
+out/
+target/
 # Log file
 *.log
 
