@@ -1,3 +1,5 @@
+package Model;
+
 public class Note {
     private int id;
     private String title;

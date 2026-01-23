@@ -1,14 +1,26 @@
-import java.time.LocalDate;
+package Service;
+
+import DAO.DBConnection;
+import DAO.TaskDAO;
+import Model.Note;
+import Model.Task;
+
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TaskService {
-    private List<Task> taskList=new ArrayList<>();
+//    private List<Task> taskList=new ArrayList<>();
+    private TaskDAO taskDAO;
+    public TaskService() {
+        taskDAO = new TaskDAO();
+    }
     private int taskCount=1;
-    public void createTask(String title, String description, LocalDate date) {
+    public void createTask(String title, String description, Date date) throws Exception {
         Task task=new Task(taskCount++,title,description,date);
-        taskList.add(task);
-        System.out.println("Task created successfully with ID: "+task.getTaskId());
+        taskDAO.saveTask(task);
+        System.out.println("Model.Task created successfully with ID: "+task.getTaskId());
     }
     public List<Task> getAllTasks() {
         return taskList;
@@ -37,10 +49,10 @@ public class TaskService {
             Note note=new Note(noteId,title,body);
             task.addNote(note);
             task.setNoteCount(noteId++);
-            System.out.println("Note Added Successfully");
+            System.out.println("Model.Note Added Successfully");
         }
         else{
-            System.out.println("Task Not Found");
+            System.out.println("Model.Task Not Found");
         }
     }
     public boolean deleteNoteFromTask(int taskId, int noteId) {

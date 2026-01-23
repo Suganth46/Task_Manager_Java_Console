@@ -1,4 +1,6 @@
-import java.time.LocalDate;
+package Model;
+
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -6,12 +8,12 @@ public class Task {
     private int taskID;
     private String taskTitle;
     private String taskDescription;
-    private LocalDate deadline;
+    private Date deadline;
     private List<Note> note;
     private int noteCount;
     private boolean completed;
     
-    public Task(int taskID,String taskTitle,String taskDescription,LocalDate deadline){
+    public Task(int taskID,String taskTitle,String taskDescription,Date deadline){
         this.taskID=taskID;
         this.taskTitle=taskTitle;
         this.taskDescription=taskDescription;
@@ -34,7 +36,8 @@ public class Task {
     public List<Note> getNotes() {
         return note;
     }
-
+    public Date getDeadline(){ return deadline;}
+    public boolean getTaskComplete(){ return completed;}
     public int getNoteCount() {
         return noteCount;
     }
@@ -59,5 +62,6 @@ public class Task {
         String status=completed?"[COMPLETED]":"[PENDING]";
         String title=(taskTitle!=null && !taskTitle.isEmpty())?taskTitle:"No title";
         return String.format("%d. %s %s (Due: %s)\n Desc: %s\n notes count: %d",taskID,status,title,deadline,taskDescription,note.size());
-    } 
+    }
+
 }

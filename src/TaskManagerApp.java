@@ -1,4 +1,9 @@
-import java.time.LocalDate;
+import Model.Task;
+import Service.TaskService;
+
+import java.sql.Date;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
@@ -7,7 +12,7 @@ public class TaskManagerApp {
     private static TaskService service=new TaskService();
     private static Scanner scanner=new Scanner(System.in);
     private static DateTimeFormatter dateTimeFormatter=DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         System.out.println("Task Manager");
         while (true) {
             printMenu();
@@ -122,17 +127,18 @@ public class TaskManagerApp {
         scanner.nextLine();
         return Number;
     }
-    private static void createTask() {
+    private static void createTask() throws Exception {
         System.out.print("Enter Title: ");
         String title=scanner.nextLine();
         System.out.print("Enter Description: ");
         String description=scanner.nextLine();
-        LocalDate date=null;
+        Date date=null;
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         while(date==null){
             System.out.print("Enter a DeadLine (dd/MM/yyyy): ");
             String dateString=scanner.nextLine();
             try {
-                date=LocalDate.parse(dateString, dateTimeFormatter);
+                date=(Date) formatter.parse(dateString);
             } catch (Exception e) {
                 System.out.println("Invalid Date Format use dd/MM/yyyy");
             }
