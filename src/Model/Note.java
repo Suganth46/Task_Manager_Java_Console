@@ -19,9 +19,4 @@ public class Note {
     public int getNoteTaskId() { return taskId;}
     public String getTitle(){ return title;}
     public String getBody(){ return Body;}
-
-    @Override
-    public String toString(){
-        return String.format("%d. Title: %s \n Body: %s",id,title,Body);
-    }
 }
